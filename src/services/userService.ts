@@ -1,6 +1,10 @@
 import bcrypt from 'bcryptjs'
 import User from '../models/User'
-import { IUserService } from '../types/user.interface'
+import {
+  IUserDataDocument,
+  IUserService,
+  USER_MESSAGE
+} from '../types/user.interface'
 import { CONSTANTS } from '../types/shared.interface'
 
 export class UserService implements IUserService {
@@ -8,10 +12,10 @@ export class UserService implements IUserService {
     username: string,
     email: string,
     password: string
-  ): Promise<void> {
+  ): Promise<IUserDataDocument> {
     const existingUser = await User.findOne({ email })
     if (existingUser) {
-      throw new Error('User already exists')
+      throw new Error(USER_MESSAGE.USER_ALREADY_EXISTS)
     }
 
     const hashedPassword = await bcrypt.hash(password, CONSTANTS.TEN)
@@ -22,6 +26,6 @@ export class UserService implements IUserService {
       password: hashedPassword
     })
 
-    await newUser.save()
+    return newUser.save()
   }
 }

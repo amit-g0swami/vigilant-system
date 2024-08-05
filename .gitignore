@@ -4,7 +4,6 @@ dist/
 lib/
 
 # Compiled node class files
-types
 src/tests
 
 # Compiled Python bytecode

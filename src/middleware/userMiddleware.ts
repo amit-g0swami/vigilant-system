@@ -4,10 +4,10 @@ import { HTTP_STATUS_CODE } from '../types/shared.interface'
 import {
   IRegisterRequestBody,
   IUserResponse,
-  IUserValidator
+  IUserMiddleware
 } from '../types/user.interface'
 
-class UserValidator implements IUserValidator {
+class UserMiddleware implements IUserMiddleware {
   public validate(schema: ObjectSchema) {
     return (
       req: Request<IRegisterRequestBody>,
@@ -25,4 +25,4 @@ class UserValidator implements IUserValidator {
   }
 }
 
-export const userValidator = new UserValidator()
+export const userMiddleware = new UserMiddleware()

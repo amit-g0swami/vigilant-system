@@ -1,9 +1,10 @@
-import express from 'express'
+import express, { Application } from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import userRouter from '../routes/userRoutes'
+import { setupSwagger } from '../swagger'
 import { Logger } from '../logger/logger.lib'
 import { connectToDB } from '../config/database'
 import { CONSTANTS, END_POINT } from '../types/shared.interface'
@@ -18,7 +19,7 @@ namespace ClientServerInterface {
 }
 
 class ClientServer implements ClientServerInterface.IClientServer {
-  private app: express.Application
+  private app: Application
   private port: string | number
 
   constructor() {
@@ -27,6 +28,7 @@ class ClientServer implements ClientServerInterface.IClientServer {
 
     this._initializeMiddlewares()
     this._initializeRoutes()
+    this._initializeSwagger()
   }
 
   private _initializeMiddlewares() {
@@ -37,11 +39,14 @@ class ClientServer implements ClientServerInterface.IClientServer {
     this.app.use(morgan('combined'))
   }
 
+  private _initializeSwagger() {
+    setupSwagger(this.app)
+  }
+
   private _initializeRoutes() {
     this.app.get('/', (_req, res) => {
       res.send('Hello World!')
     })
-
     this.app.use(END_POINT.BASE_URL, userRouter)
   }
 

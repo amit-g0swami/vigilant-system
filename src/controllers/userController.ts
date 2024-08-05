@@ -23,10 +23,15 @@ class UserController implements IUserController {
     const { username, email, password } = req.body
 
     try {
-      await this.userService.registerUser(username, email, password)
+      const result = await this.userService.registerUser(
+        username,
+        email,
+        password
+      )
       res.status(HTTP_STATUS_CODE.CREATED).json({
         message: USER_MESSAGE.USER_REGISTERED,
-        status: HTTP_STATUS_CODE.CREATED
+        status: HTTP_STATUS_CODE.CREATED,
+        user: result
       })
     } catch (error) {
       res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
