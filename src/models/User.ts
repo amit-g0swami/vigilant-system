@@ -1,10 +1,5 @@
-import mongoose, { Schema, Document } from 'mongoose'
-
-interface IUser extends Document {
-  username: string
-  email: string
-  password: string
-}
+import mongoose, { Schema } from 'mongoose'
+import { UserRepository } from '../types/user.interface'
 
 const userSchema: Schema = new Schema({
   username: { type: String, required: true, unique: true },
@@ -12,6 +7,9 @@ const userSchema: Schema = new Schema({
   password: { type: String, required: true }
 })
 
-const User = mongoose.model<IUser>('User', userSchema)
+const User = mongoose.model<UserRepository.IUserDataDocument>(
+  'User',
+  userSchema
+)
 
 export default User

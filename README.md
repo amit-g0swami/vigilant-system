@@ -1,2 +1,1 @@
-# shippivot-server
 # vigilant-system

@@ -1,24 +1,18 @@
 import { Request, Response } from 'express'
 import { UserService } from '../services/userService'
-import {
-  IRegisterRequestBody,
-  IUserController,
-  IUserResponse,
-  IUserService,
-  USER_MESSAGE
-} from '../types/user.interface'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from '../types/shared.interface'
+import { UserRepository } from '../types/user.interface'
 
-class UserController implements IUserController {
-  private userService: IUserService
+class UserController implements UserRepository.IUserController {
+  private userService: UserRepository.IUserService
 
-  constructor(userService: IUserService) {
+  constructor(userService: UserRepository.IUserService) {
     this.userService = userService
   }
 
   public registerUserController = async (
-    req: Request<{}, {}, IRegisterRequestBody>,
-    res: Response<IUserResponse>
+    req: Request<{}, {}, UserRepository.IRegisterRequestBody>,
+    res: Response<UserRepository.IUserResponse>
   ): Promise<void> => {
     const { username, email, password } = req.body
 
@@ -29,7 +23,7 @@ class UserController implements IUserController {
         password
       )
       res.status(HTTP_STATUS_CODE.CREATED).json({
-        message: USER_MESSAGE.USER_REGISTERED,
+        message: UserRepository.USER_MESSAGE.USER_REGISTERED,
         status: HTTP_STATUS_CODE.CREATED,
         user: result
       })
