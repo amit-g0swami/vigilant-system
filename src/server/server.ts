@@ -8,6 +8,7 @@ import { Logger } from '../logger/logger.lib'
 import { connectToDB } from '../config/database'
 import { CONSTANTS, END_POINT } from '../types/shared.interface'
 import { userRouter } from '../routes/userRoutes'
+import { queryRouter } from '../routes/queryRoutes'
 
 dotenv.config()
 const defaultPort = 5001
@@ -48,6 +49,7 @@ class ClientServer implements ClientServerInterface.IClientServer {
       res.send('Hello World!')
     })
     this.app.use(END_POINT.BASE_URL, userRouter.getRouter())
+    this.app.use(END_POINT.BASE_URL, queryRouter.getRouter())
   }
 
   public start() {

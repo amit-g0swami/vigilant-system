@@ -1,5 +1,5 @@
 import { Request, Response } from 'express'
-import { UserService } from '../services/userService'
+import { userService } from '../services/userService'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from '../types/shared.interface'
 import { UserRepository } from '../types/user.interface'
 
@@ -116,5 +116,4 @@ class UserController implements UserRepository.IUserController {
   }
 }
 
-const userService = new UserService()
 export const userController = new UserController(userService)

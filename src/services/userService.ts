@@ -4,7 +4,7 @@ import User from '../models/User'
 import { CONSTANTS, ERROR_MESSAGE } from '../types/shared.interface'
 import { UserRepository } from '../types/user.interface'
 
-export class UserService implements UserRepository.IUserService {
+class UserService implements UserRepository.IUserService {
   public async registerUser(
     username: string,
     email: string,
@@ -46,8 +46,7 @@ export class UserService implements UserRepository.IUserService {
   }
 
   public logoutUser(token: string) {
-    // This is a dummy implementation
-    // In a real-world application, you would blacklist the token
+    // Blacklist the token
     // or delete it from the client-side
     // eslint-disable-next-line no-console
     console.log(token)
@@ -64,3 +63,5 @@ export class UserService implements UserRepository.IUserService {
     return user
   }
 }
+
+export const userService = new UserService()
