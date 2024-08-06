@@ -14,6 +14,10 @@ dotenv.config()
 const defaultPort = 5001
 
 namespace ClientServerInterface {
+  export enum SERVER_MESSAGE {
+    CONNECTION_SUCCESS = 'Connected to the database'
+  }
+
   export interface IClientServer {
     start(): void
   }
@@ -52,19 +56,17 @@ class ClientServer implements ClientServerInterface.IClientServer {
     this.app.use(END_POINT.BASE_URL, queryRouter.getRouter())
   }
 
-  public start() {
-    connectToDB
-      .connect()
-      .then(() => {
-        Logger.info('Connected to the database')
+  public async start() {
+    try {
+      await connectToDB.connect()
+      Logger.info(ClientServerInterface.SERVER_MESSAGE.CONNECTION_SUCCESS)
+      this.app.listen(this.port, () => {
+        Logger.info(`Server is running on port ${this.port}`)
       })
-      .catch((err) => {
-        Logger.error('Error connecting to the database:', err)
-        process.exit(CONSTANTS.ONE)
-      })
-    this.app.listen(this.port, () => {
-      Logger.info(`Server is running on port ${this.port}`)
-    })
+    } catch (err) {
+      Logger.error('Error connecting to the database:', err)
+      process.exit(CONSTANTS.ONE)
+    }
   }
 }
 

@@ -33,8 +33,6 @@ export namespace QueryRepository {
 
   export interface IQueryRequestBody extends IQueryData {}
 
-  export interface IQueryRequestBody extends IQueryData {}
-
   export interface IQueryDataDocument extends IQueryData, Document {}
 
   type IBaseQueryMessage = string
