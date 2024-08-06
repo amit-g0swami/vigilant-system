@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from 'express'
-import { ERROR_MESSAGE, HTTP_STATUS_CODE } from './shared.interface'
 import { ObjectSchema } from 'joi'
 import { Document } from 'mongoose'
+import { NextFunction, Request, Response } from 'express'
+import { ERROR_MESSAGE, HTTP_STATUS_CODE } from './shared.interface'
 
 export namespace UserRepository {
   export enum USER_MESSAGE {
@@ -19,8 +19,12 @@ export namespace UserRepository {
 
   export interface IUserDataDocument extends IUser, Document {}
 
+  type IBaseUserMessage = string
+
+  type IUserMessage = USER_MESSAGE | ERROR_MESSAGE | IBaseUserMessage
+
   export interface IUserResponse {
-    message: USER_MESSAGE | ERROR_MESSAGE | string
+    message: IUserMessage
     status?: HTTP_STATUS_CODE
     user?: IUserDataDocument
   }
@@ -45,7 +49,7 @@ export namespace UserRepository {
 
   export interface IUserController {
     registerUserController(
-      req: Request,
+      req: Request<{}, {}, IRegisterRequestBody>,
       res: Response<IUserResponse>
     ): Promise<void>
   }
