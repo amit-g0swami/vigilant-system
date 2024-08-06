@@ -1,6 +1,6 @@
 import { ObjectSchema } from 'joi'
 import { Document } from 'mongoose'
-import { NextFunction, Request, Response } from 'express'
+import { NextFunction, Request, Response, Router } from 'express'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from './shared.interface'
 
 export namespace UserRepository {
@@ -23,11 +23,9 @@ export namespace UserRepository {
     usernameOrEmail: string
     password: string
   }
-
   export interface IUserDataDocument extends IUser, Document {}
 
   type IBaseUserMessage = string
-
   type IUserMessage = USER_MESSAGE | ERROR_MESSAGE | IBaseUserMessage
 
   export interface ILoginUser {
@@ -50,6 +48,7 @@ export namespace UserRepository {
     ): Promise<IUserDataDocument>
     loginUser(usernameOrEmail: string, password: string): Promise<ILoginUser>
     logoutUser(token: string): void
+    getUser(token: string): Promise<IUserDataDocument>
   }
 
   export interface IUserMiddleware {
@@ -71,12 +70,21 @@ export namespace UserRepository {
       req: Request<{}, {}, ILoginRequestBody>,
       res: Response<IUserResponse>
     ): Promise<void>
-    logoutUserController(req: Request, res: Response<IUserResponse>): void
+    logoutUserController(
+      req: Request,
+      res: Response<IUserResponse>
+    ): Promise<void>
+    getUserController(req: Request, res: Response<IUserResponse>): Promise<void>
+  }
+
+  export interface IUserRouter {
+    getRouter(): Router
   }
 
   export enum USER_ENDPOINT {
     REGISTER = '/register',
     LOGIN = '/login',
-    LOGOUT = '/logout'
+    LOGOUT = '/logout',
+    GET_USER = '/user'
   }
 }

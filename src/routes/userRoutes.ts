@@ -1,35 +1,58 @@
 import rateLimit from 'express-rate-limit'
 import userSchemas from '../schemas/userSchemas'
 import { Router } from 'express'
+import { UserRepository } from '../types/user.interface'
+import { authenticateJWT } from '../middleware/jwtMiddleware'
 import { userController } from '../controllers/userController'
 import { userMiddleware } from '../middleware/userMiddleware'
-import { UserRepository } from '../types/user.interface'
 
-const router = Router()
+class UserRouter implements UserRepository.IUserRouter {
+  private router: Router
+  private userController: any
+  private userMiddleware: any
 
-const loginRateLimiter = rateLimit({
-  // eslint-disable-next-line no-magic-numbers
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 5, // limit each IP to 5 login requests per windowMs
-  message: 'Too many login attempts from this IP, please try again later'
-})
+  constructor() {
+    this.router = Router()
+    this.userController = userController
+    this.userMiddleware = userMiddleware
+    this.initializeRoutes()
+  }
 
-router.post(
-  UserRepository.USER_ENDPOINT.REGISTER,
-  userMiddleware.validate(userSchemas.registerSchema),
-  userController.registerUserController
-)
+  private initializeRoutes() {
+    const loginRateLimiter = rateLimit({
+      // eslint-disable-next-line no-magic-numbers
+      windowMs: 15 * 60 * 1000, // 15 minutes
+      max: 5, // limit each IP to 5 login requests per windowMs
+      message: 'Too many login attempts from this IP, please try again later'
+    })
 
-router.post(
-  UserRepository.USER_ENDPOINT.LOGIN,
-  loginRateLimiter,
-  userMiddleware.validate(userSchemas.loginSchema),
-  userController.loginUserController
-)
+    this.router.post(
+      UserRepository.USER_ENDPOINT.REGISTER,
+      this.userMiddleware.validate(userSchemas.registerSchema),
+      (req, res) => this.userController.registerUserController(req, res)
+    )
 
-router.post(
-  UserRepository.USER_ENDPOINT.LOGOUT,
-  userController.logoutUserController
-)
+    this.router.post(
+      UserRepository.USER_ENDPOINT.LOGIN,
+      loginRateLimiter,
+      this.userMiddleware.validate(userSchemas.loginSchema),
+      (req, res) => this.userController.loginUserController(req, res)
+    )
 
-export default router
+    this.router.post(UserRepository.USER_ENDPOINT.LOGOUT, (req, res) =>
+      this.userController.logoutUserController(req, res)
+    )
+
+    this.router.get(
+      UserRepository.USER_ENDPOINT.GET_USER,
+      authenticateJWT,
+      (req, res) => this.userController.getUserController(req, res)
+    )
+  }
+
+  public getRouter() {
+    return this.router
+  }
+}
+
+export const userRouter = new UserRouter()

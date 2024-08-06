@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 import User from '../models/User'
-import { CONSTANTS } from '../types/shared.interface'
+import { CONSTANTS, ERROR_MESSAGE } from '../types/shared.interface'
 import { UserRepository } from '../types/user.interface'
 
 export class UserService implements UserRepository.IUserService {
@@ -51,5 +51,16 @@ export class UserService implements UserRepository.IUserService {
     // or delete it from the client-side
     // eslint-disable-next-line no-console
     console.log(token)
+  }
+
+  public async getUser(
+    token: string
+  ): Promise<UserRepository.IUserDataDocument> {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string }
+    const user = await User.findById(decoded.id)
+    if (!user) {
+      throw new Error(ERROR_MESSAGE.INVALID_USER)
+    }
+    return user
   }
 }

@@ -3,11 +3,11 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import userRouter from '../routes/userRoutes'
 import { setupSwagger } from '../swagger'
 import { Logger } from '../logger/logger.lib'
 import { connectToDB } from '../config/database'
 import { CONSTANTS, END_POINT } from '../types/shared.interface'
+import { userRouter } from '../routes/userRoutes'
 
 dotenv.config()
 const defaultPort = 5001
@@ -47,7 +47,7 @@ class ClientServer implements ClientServerInterface.IClientServer {
     this.app.get('/', (_req, res) => {
       res.send('Hello World!')
     })
-    this.app.use(END_POINT.BASE_URL, userRouter)
+    this.app.use(END_POINT.BASE_URL, userRouter.getRouter())
   }
 
   public start() {

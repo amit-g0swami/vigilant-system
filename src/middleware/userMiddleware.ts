@@ -12,9 +12,10 @@ class UserMiddleware implements UserRepository.IUserMiddleware {
     ) => {
       const { error } = schema.validate(req.body)
       if (error) {
-        return res
-          .status(HTTP_STATUS_CODE.BAD_REQUEST)
-          .json({ message: error.details[0].message })
+        return res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
+          message: error.details[0].message,
+          status: HTTP_STATUS_CODE.BAD_REQUEST
+        })
       }
       next()
     }

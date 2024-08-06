@@ -60,10 +60,10 @@ class UserController implements UserRepository.IUserController {
     }
   }
 
-  public logoutUserController = (
+  public logoutUserController = async (
     req: Request,
     res: Response<UserRepository.IUserResponse>
-  ): void => {
+  ): Promise<void> => {
     const token = req.headers.authorization?.split(' ')[1]
     if (!token) {
       res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
@@ -74,10 +74,38 @@ class UserController implements UserRepository.IUserController {
     }
 
     try {
-      this.userService.logoutUser(token)
+      await this.userService.logoutUser(token)
       res.status(HTTP_STATUS_CODE.OK).json({
         message: UserRepository.USER_MESSAGE.USER_LOGOUT_SUCCESS,
         status: HTTP_STATUS_CODE.OK
+      })
+    } catch (error) {
+      res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({
+        message: ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
+        status: HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR
+      })
+    }
+  }
+
+  public getUserController = async (
+    req: Request,
+    res: Response<UserRepository.IUserResponse>
+  ): Promise<void> => {
+    const token = req.headers.authorization?.split(' ')[1]
+    if (!token) {
+      res.status(HTTP_STATUS_CODE.BAD_REQUEST).json({
+        message: ERROR_MESSAGE.INVALID_TOKEN,
+        status: HTTP_STATUS_CODE.BAD_REQUEST
+      })
+      return
+    }
+
+    try {
+      const user = await this.userService.getUser(token)
+      res.status(HTTP_STATUS_CODE.OK).json({
+        message: UserRepository.USER_MESSAGE.USER_LOGOUT_SUCCESS,
+        status: HTTP_STATUS_CODE.OK,
+        user: user
       })
     } catch (error) {
       res.status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR).json({

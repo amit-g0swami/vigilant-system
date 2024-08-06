@@ -38,7 +38,8 @@ export enum ERROR_MESSAGE {
   INVALID_OTP = 'Invalid OTP',
   NOT_AUTHORIZED = 'Not authorized',
   INVALID_TOKEN = 'Invalid token',
-  UNAUTHORIZED = 'Unauthorized'
+  UNAUTHORIZED = 'Unauthorized',
+  INVALID_USER = 'Invalid user'
 }
 
 export const CONSTANTS = {
