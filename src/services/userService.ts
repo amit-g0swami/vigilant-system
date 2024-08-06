@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 import User from '../models/User'
 import { CONSTANTS } from '../types/shared.interface'
 import { UserRepository } from '../types/user.interface'
@@ -23,5 +24,32 @@ export class UserService implements UserRepository.IUserService {
     })
 
     return newUser.save()
+  }
+
+  public async loginUser(
+    usernameOrEmail: string,
+    password: string
+  ): Promise<UserRepository.ILoginUser> {
+    const user = await User.findOne({
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
+    })
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      throw new Error(UserRepository.USER_MESSAGE.INVALID_CREDENTIALS)
+    }
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!, {
+      expiresIn: '1h'
+    })
+
+    return { user, token }
+  }
+
+  public logoutUser(token: string) {
+    // This is a dummy implementation
+    // In a real-world application, you would blacklist the token
+    // or delete it from the client-side
+    // eslint-disable-next-line no-console
+    console.log(token)
   }
 }

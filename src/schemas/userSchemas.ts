@@ -7,8 +7,14 @@ const registerSchema = Joi.object({
   password: Joi.string().min(CONSTANTS.EIGHT).required()
 })
 
+const loginSchema = Joi.object({
+  usernameOrEmail: Joi.string().required(),
+  password: Joi.string().required()
+})
+
 const userSchemas = {
-  registerSchema
+  registerSchema,
+  loginSchema
 }
 
 export default userSchemas
