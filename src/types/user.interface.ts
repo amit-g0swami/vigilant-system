@@ -41,7 +41,9 @@ export namespace UserRepository {
   export interface IUserBaseHeader {
     authorization: string
   }
-  export interface IRegisterRequestBody extends IUser, Request {}
+  export interface IRegisterRequestBody
+    extends IUser,
+      Request<IEmptyObject, IEmptyObject, IUser> {}
   export interface IGetUserInfoHeader
     extends Request<IEmptyObject, IEmptyObject, IUserBaseHeader> {}
   export interface ILoginRequestBody
@@ -49,7 +51,7 @@ export namespace UserRepository {
   export interface IUserDataDocument extends IUser, Document {}
 
   export type IUserBaseRouter = Router
-  export type IUserMiddlewareRequest = IRegisterRequestBody | ILoginRequestBody
+  export type IUserMiddlewareRequest = IRegisterRequestBody
 
   export interface ILoginUser {
     user: IUserDataDocument
