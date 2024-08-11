@@ -2,16 +2,18 @@ import mongoose from 'mongoose'
 import { Logger } from '../logger/logger.lib'
 import { DatabaseConnectorInterface } from '../types/db.interface'
 
-mongoose.set('strictQuery', false)
 const DB_CONNECTION_URL = process.env.DB_URL!
 
 class DatabaseConnector
   implements DatabaseConnectorInterface.IDatabaseConnector
 {
   private dbUrl: string
+
   constructor(dbUrl: string) {
+    mongoose.set('strictQuery', false)
     this.dbUrl = dbUrl
   }
+
   public async connect() {
     try {
       await mongoose.connect(this.dbUrl)

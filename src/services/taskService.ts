@@ -1,7 +1,10 @@
 import Task from '../models/Task'
+import { redisConnector } from '../config/redisClient'
 import { TaskRepository } from '../types/task.interface'
 
 class TaskService implements TaskRepository.ITaskService {
+  private redisClient = redisConnector.getClient()
+
   public createTask(
     taskData: TaskRepository.ICreateTaskRequestBody
   ): Promise<TaskRepository.ITask> {
@@ -9,8 +12,20 @@ class TaskService implements TaskRepository.ITaskService {
     return task.save()
   }
 
-  public getTaskById(taskId: string): Promise<TaskRepository.ITask | null> {
-    return Task.findById(taskId)
+  public async getTaskById(
+    taskId: string
+  ): Promise<TaskRepository.ITask | null> {
+    const cachedTask = await this.redisClient.get(`task:${taskId}`)
+    if (cachedTask) {
+      return JSON.parse(cachedTask)
+    }
+
+    const task = Task.findById(taskId)
+    if (task) {
+      await this.redisClient.set(`task:${taskId}`, JSON.stringify(task))
+    }
+
+    return task
   }
 }
 

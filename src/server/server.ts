@@ -15,6 +15,7 @@ import { userRouter } from '../routes/userRoutes'
 import { queryRouter } from '../routes/queryRoutes'
 import { ClientServerInterface } from '../types/server.interface'
 import { taskRouter } from '../routes/taskRoutes'
+import { redisConnector } from '../config/redisClient'
 
 class ClientServer implements ClientServerInterface.IClientServer {
   private app: Application
@@ -31,18 +32,9 @@ class ClientServer implements ClientServerInterface.IClientServer {
   }
 
   private _validateEnv() {
-    const envConfig: ClientServerInterface.IEnvConfig = {
-      DB_CONNECTION_URL: process.env.DB_URI!,
-      PORT: process.env.PORT!,
-      JWT_SECRET: process.env.JWT_SECRET!,
-      JWT_KEY: process.env.JWT_KEY!,
-      EMAIL_USER: process.env.EMAIL_USER!,
-      EMAIL_PASS: process.env.EMAIL_PASS!,
-      EMAIL_HOST: process.env.EMAIL_HOST!,
-      EMAIL_SERVICE: process.env.EMAIL_SERVICE!,
-      NODE_ENV: process.env.NODE_ENV!
-    }
-    return ClientServerInterface.validateEnvVars(envConfig)
+    return ClientServerInterface.validateEnvVars(
+      ClientServerInterface.envConfig
+    )
   }
 
   private _initializeMiddlewares() {
@@ -69,9 +61,18 @@ class ClientServer implements ClientServerInterface.IClientServer {
     this.app.use(END_POINT.BASE_URL, taskRouter.getRouter())
   }
 
+  private _initializeDBConection() {
+    return connectToDB.connect()
+  }
+
+  private _initializeRedis() {
+    return redisConnector.connect()
+  }
+
   public async start() {
     try {
-      await connectToDB.connect()
+      await this._initializeDBConection()
+      await this._initializeRedis()
       Logger.info(ClientServerInterface.SERVER_MESSAGE.CONNECTION_SUCCESS)
       this.app.listen(this.port, () => {
         Logger.info(`Server is running on port ${this.port}`)
