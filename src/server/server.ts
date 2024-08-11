@@ -15,12 +15,12 @@ dotenv.config()
 
 class ClientServer implements ClientServerInterface.IClientServer {
   private app: Application
-  private port: string | undefined
+  private port: string
 
   constructor() {
     this._validateEnv()
     this.app = express()
-    this.port = process.env.PORT
+    this.port = process.env.PORT!
     this._initializeMiddlewares()
     this._initializeRoutes()
     this._initializeSwagger()
@@ -28,7 +28,7 @@ class ClientServer implements ClientServerInterface.IClientServer {
 
   private _validateEnv() {
     const envConfig: ClientServerInterface.IEnvConfig = {
-      DB_URI: process.env.DB_URI!,
+      DB_CONNECTION_URL: process.env.DB_URI!,
       PORT: process.env.PORT!,
       JWT_SECRET: process.env.JWT_SECRET!,
       JWT_KEY: process.env.JWT_KEY!,

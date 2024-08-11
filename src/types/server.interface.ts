@@ -4,8 +4,8 @@ export namespace ClientServerInterface {
   }
 
   export interface IEnvConfig {
-    DB_URI: string
-    PORT?: string
+    DB_CONNECTION_URL: string
+    PORT: string
     JWT_SECRET: string
     JWT_KEY: string
     EMAIL_USER: string
@@ -16,7 +16,7 @@ export namespace ClientServerInterface {
   }
 
   export const requiredEnvVars: (keyof IEnvConfig)[] = [
-    'DB_URI',
+    'DB_CONNECTION_URL',
     'JWT_SECRET',
     'JWT_KEY',
     'EMAIL_USER',
