@@ -4,15 +4,32 @@ import User from '../models/User'
 import { CONSTANTS, ERROR_MESSAGE } from '../types/shared.interface'
 import { UserRepository } from '../types/user.interface'
 import { emailService } from './mail.Service'
+import { Logger } from '../logger/logger.lib'
 
 class UserService implements UserRepository.IUserService {
+  private _getUserByEmail(
+    email: string
+  ): Promise<UserRepository.IUserDataDocument | null> {
+    return User.findOne({ email })
+  }
+
+  private _getUserByUsername(
+    username: string
+  ): Promise<UserRepository.IUserDataDocument | null> {
+    return User.findOne({ username })
+  }
+
   public async registerUser(
     username: string,
     email: string,
     password: string
   ): Promise<UserRepository.IUserDataDocument> {
-    const existingUser = await User.findOne({ email })
-    if (existingUser) {
+    const [existingUserByEmail, existingUserByUsername] = await Promise.all([
+      this._getUserByEmail(email),
+      this._getUserByUsername(username)
+    ])
+
+    if (existingUserByEmail || existingUserByUsername) {
       throw new Error(UserRepository.USER_MESSAGE.USER_ALREADY_EXISTS)
     }
 
@@ -49,10 +66,7 @@ class UserService implements UserRepository.IUserService {
   }
 
   public logoutUser(token: string) {
-    // Blacklist the token
-    // or delete it from the client-side
-    // eslint-disable-next-line no-console
-    console.log(token)
+    Logger.info(token)
   }
 
   public async getUser(

@@ -4,18 +4,30 @@ import { NextFunction, Request, Response, Router } from 'express'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from './shared.interface'
 
 export namespace UserRepository {
+  export enum USER_ROLE_TYPE {
+    SIMPLE = 'simple',
+    ADMIN = 'admin',
+    MANAGER = 'manager'
+  }
+
   export enum USER_MESSAGE {
     USER_REGISTERED = 'User registered successfully',
     USER_ALREADY_EXISTS = 'User already exists',
     USER_LOGIN_SUCCESS = 'User logged in successfully',
     USER_LOGOUT_SUCCESS = 'User logged out successfully',
-    INVALID_CREDENTIALS = 'Invalid username or password'
+    INVALID_CREDENTIALS = 'Invalid username or password',
+    USER_NAME_REQUIRED = 'Username is required',
+    EMAIL_REQUIRED = 'Email is required',
+    PASSWORD_REQUIRED = 'Password is required'
   }
 
   export interface IUser {
     username: string
     email: string
     password: string
+    role: USER_ROLE_TYPE
+    createdAt: Date
+    updatedAt: Date
   }
 
   export interface IRegisterRequestBody extends IUser {}
