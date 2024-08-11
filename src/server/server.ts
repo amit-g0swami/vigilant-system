@@ -9,31 +9,36 @@ import { connectToDB } from '../config/database'
 import { CONSTANTS, END_POINT } from '../types/shared.interface'
 import { userRouter } from '../routes/userRoutes'
 import { queryRouter } from '../routes/queryRoutes'
+import { ClientServerInterface } from '../types/server.interface'
 
 dotenv.config()
-const defaultPort = 5001
-
-namespace ClientServerInterface {
-  export enum SERVER_MESSAGE {
-    CONNECTION_SUCCESS = 'Connected to the database'
-  }
-
-  export interface IClientServer {
-    start(): void
-  }
-}
 
 class ClientServer implements ClientServerInterface.IClientServer {
   private app: Application
-  private port: string | number
+  private port: string | undefined
 
   constructor() {
+    this._validateEnv()
     this.app = express()
-    this.port = process.env.PORT || defaultPort
-
+    this.port = process.env.PORT
     this._initializeMiddlewares()
     this._initializeRoutes()
     this._initializeSwagger()
+  }
+
+  private _validateEnv() {
+    const envConfig: ClientServerInterface.IEnvConfig = {
+      DB_URI: process.env.DB_URI!,
+      PORT: process.env.PORT!,
+      JWT_SECRET: process.env.JWT_SECRET!,
+      JWT_KEY: process.env.JWT_KEY!,
+      EMAIL_USER: process.env.EMAIL_USER!,
+      EMAIL_PASS: process.env.EMAIL_PASS!,
+      EMAIL_HOST: process.env.EMAIL_HOST!,
+      EMAIL_SERVICE: process.env.EMAIL_SERVICE!,
+      NODE_ENV: process.env.NODE_ENV!
+    }
+    return ClientServerInterface.validateEnvVars(envConfig)
   }
 
   private _initializeMiddlewares() {
