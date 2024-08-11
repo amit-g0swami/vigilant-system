@@ -1,9 +1,14 @@
 import Task from '../models/Task'
 import { redisConnector } from '../config/redisClient'
 import { TaskRepository } from '../types/task.interface'
+import { RedisClientType } from 'redis'
 
 class TaskService implements TaskRepository.ITaskService {
-  private redisClient = redisConnector.getClient()
+  private redisClient: RedisClientType
+
+  constructor() {
+    this.redisClient = redisConnector.getClient()
+  }
 
   public createTask(
     taskData: TaskRepository.ICreateTaskRequestBody
