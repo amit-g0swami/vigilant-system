@@ -1,4 +1,3 @@
-import { Request, Response } from 'express'
 import { TaskRepository } from '../types/task.interface'
 import { taskService } from '../services/taskService'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from '../types/shared.interface'
@@ -11,8 +10,8 @@ class TaskController implements TaskRepository.ITaskController {
   }
 
   public async createTask(
-    req: Request<{}, {}, TaskRepository.ICreateTaskRequestBody>,
-    res: Response<TaskRepository.ITaskResponse>
+    req: TaskRepository.ICreateTaskRequestBody,
+    res: TaskRepository.ITaskResponse
   ): Promise<void> {
     const { title, description, dueDate, priority, assignedTo, createdBy } =
       req.body
@@ -40,7 +39,7 @@ class TaskController implements TaskRepository.ITaskController {
 
   public async getTaskById(
     req: TaskRepository.ITaskRequest,
-    res: Response<TaskRepository.ITaskResponse>
+    res: TaskRepository.ITaskResponse
   ): Promise<void> {
     const { taskId } = req.params
     try {

@@ -1,4 +1,3 @@
-import { Request, Response } from 'express'
 import { userService } from '../services/userService'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from '../types/shared.interface'
 import { UserRepository } from '../types/user.interface'
@@ -11,8 +10,8 @@ class UserController implements UserRepository.IUserController {
   }
 
   public registerUserController = async (
-    req: Request<{}, {}, UserRepository.IRegisterRequestBody>,
-    res: Response<UserRepository.IUserResponse>
+    req: UserRepository.IRegisterRequestBody,
+    res: UserRepository.IUserResponse
   ): Promise<void> => {
     const { username, email, password } = req.body
 
@@ -36,8 +35,8 @@ class UserController implements UserRepository.IUserController {
   }
 
   public loginUserController = async (
-    req: Request<{}, {}, UserRepository.ILoginRequestBody>,
-    res: Response<UserRepository.IUserResponse>
+    req: UserRepository.ILoginRequestBody,
+    res: UserRepository.IUserResponse
   ): Promise<void> => {
     const { usernameOrEmail, password } = req.body
 
@@ -61,8 +60,8 @@ class UserController implements UserRepository.IUserController {
   }
 
   public logoutUserController = async (
-    req: Request,
-    res: Response<UserRepository.IUserResponse>
+    req: UserRepository.ILogoutUserRequest,
+    res: UserRepository.IUserResponse
   ): Promise<void> => {
     const token = req.headers.authorization?.split(' ')[1]
     if (!token) {
@@ -88,8 +87,8 @@ class UserController implements UserRepository.IUserController {
   }
 
   public getUserController = async (
-    req: Request,
-    res: Response<UserRepository.IUserResponse>
+    req: UserRepository.IGetUserInfoHeader,
+    res: UserRepository.IUserResponse
   ): Promise<void> => {
     const token = req.headers.authorization?.split(' ')[1]
     if (!token) {

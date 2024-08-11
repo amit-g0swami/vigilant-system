@@ -25,7 +25,7 @@ export namespace TaskRepository {
     MAX_DESCRIPTION_LENGTH: 500
   }
 
-  export interface ICreateTaskRequestBody {
+  export interface ICreateTaskRequestBodyDTO {
     title: string
     description: string
     dueDate: Date
@@ -33,6 +33,9 @@ export namespace TaskRepository {
     assignedTo?: string
     createdBy: string
   }
+
+  export interface ICreateTaskRequestBody
+    extends Request<{}, {}, ICreateTaskRequestBodyDTO> {}
 
   export interface ITask extends Document {
     title: string
@@ -49,36 +52,38 @@ export namespace TaskRepository {
   type IBaseTaskMessage = string
   type ITaskMessage = TASK_MESSAGE | ERROR_MESSAGE | IBaseTaskMessage
 
+  export type IBaseTaskRouter = Router
   export interface ITaskRequest extends Request {
     params: {
       taskId: string
     }
   }
 
-  export interface ITaskResponse {
-    message: ITaskMessage
-    status: HTTP_STATUS_CODE
-    task?: ITask | ITask[]
-  }
+  export interface ITaskResponse
+    extends Response<{
+      message: ITaskMessage
+      status: HTTP_STATUS_CODE
+      task?: ITask | ITask[]
+    }> {}
 
   export interface ITaskMiddleware {
     validate(
       schema: ObjectSchema
     ): (
-      req: Request<{}, {}, ICreateTaskRequestBody>,
-      res: Response<ITaskResponse>,
+      req: ICreateTaskRequestBody,
+      res: ITaskResponse,
       next: NextFunction
     ) => void
   }
 
   export interface ITaskService {
-    createTask(taskData: ICreateTaskRequestBody): Promise<ITask>
+    createTask(taskData: ICreateTaskRequestBodyDTO): Promise<ITask>
     getTaskById(taskId: string): Promise<ITask | null>
   }
 
   export interface ITaskController {
-    createTask(req: Request, res: Response<ITaskResponse>): Promise<void>
-    getTaskById(req: Request, res: Response<ITaskResponse>): Promise<void>
+    createTask(req: ICreateTaskRequestBody, res: ITaskResponse): Promise<void>
+    getTaskById(req: ITaskRequest, res: ITaskResponse): Promise<void>
   }
 
   export interface ITaskRouter {

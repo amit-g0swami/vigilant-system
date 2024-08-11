@@ -4,6 +4,10 @@ import { NextFunction, Request, Response, Router } from 'express'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from './shared.interface'
 
 export namespace UserRepository {
+  type IBaseUserMessage = string
+  type IUserMessage = USER_MESSAGE | ERROR_MESSAGE | IBaseUserMessage
+  type IEmptyObject = {}
+
   export enum USER_ROLE_TYPE {
     SIMPLE = 'simple',
     ADMIN = 'admin',
@@ -30,27 +34,40 @@ export namespace UserRepository {
     updatedAt: Date
   }
 
-  export interface IRegisterRequestBody extends IUser {}
-  export interface ILoginRequestBody {
+  export interface IUserLoginBody {
     usernameOrEmail: string
     password: string
   }
+  export interface IUserBaseHeader {
+    authorization: string
+  }
+  export interface IRegisterRequestBody extends IUser, Request {}
+  export interface IGetUserInfoHeader
+    extends Request<IEmptyObject, IEmptyObject, IUserBaseHeader> {}
+  export interface ILoginRequestBody
+    extends Request<IEmptyObject, IEmptyObject, IUserLoginBody> {}
   export interface IUserDataDocument extends IUser, Document {}
 
-  type IBaseUserMessage = string
-  type IUserMessage = USER_MESSAGE | ERROR_MESSAGE | IBaseUserMessage
+  export type IUserBaseRouter = Router
+  export type IUserMiddlewareRequest = IRegisterRequestBody | ILoginRequestBody
 
   export interface ILoginUser {
     user: IUserDataDocument
     token: string
   }
 
-  export interface IUserResponse {
+  export interface IRegisterUserResponse {
     message: IUserMessage
     status: HTTP_STATUS_CODE
     user?: IUserDataDocument
     token?: string
   }
+
+  export interface ILogoutUserRequest
+    extends Request<IEmptyObject, IEmptyObject, IUserBaseHeader> {}
+
+  export interface IUserResponse
+    extends Response<IRegisterUserResponse | ILoginUser | IUserDataDocument> {}
 
   export interface IUserService {
     registerUser(
@@ -67,26 +84,29 @@ export namespace UserRepository {
     validate(
       schema: ObjectSchema
     ): (
-      req: Request<{}, {}, IRegisterRequestBody | ILoginRequestBody>,
-      res: Response<IUserResponse>,
+      req: IUserMiddlewareRequest,
+      res: IUserResponse,
       next: NextFunction
     ) => void
   }
 
   export interface IUserController {
     registerUserController(
-      req: Request<{}, {}, IRegisterRequestBody>,
-      res: Response<IUserResponse>
+      req: IRegisterRequestBody,
+      res: IUserResponse
     ): Promise<void>
     loginUserController(
-      req: Request<{}, {}, ILoginRequestBody>,
-      res: Response<IUserResponse>
+      req: ILoginRequestBody,
+      res: IUserResponse
     ): Promise<void>
     logoutUserController(
-      req: Request,
-      res: Response<IUserResponse>
+      req: ILogoutUserRequest,
+      res: IUserResponse
     ): Promise<void>
-    getUserController(req: Request, res: Response<IUserResponse>): Promise<void>
+    getUserController(
+      req: IGetUserInfoHeader,
+      res: IUserResponse
+    ): Promise<void>
   }
 
   export interface IUserRouter {

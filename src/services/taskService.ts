@@ -15,7 +15,7 @@ class TaskService implements TaskRepository.ITaskService {
   }
 
   public createTask(
-    taskData: TaskRepository.ICreateTaskRequestBody
+    taskData: TaskRepository.ICreateTaskRequestBodyDTO
   ): Promise<TaskRepository.ITask> {
     const task = new Task(taskData)
     return task.save()

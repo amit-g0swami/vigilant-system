@@ -1,13 +1,13 @@
 import rateLimit from 'express-rate-limit'
 import userSchemas from '../schemas/userSchemas'
-import { Router, Request } from 'express'
+import { Router } from 'express'
 import { UserRepository } from '../types/user.interface'
 import { authenticateJWT } from '../middleware/jwtMiddleware'
 import { userController } from '../controllers/userController'
 import { userMiddleware } from '../middleware/userMiddleware'
 
 class UserRouter implements UserRepository.IUserRouter {
-  private router: Router
+  private router: UserRepository.IUserBaseRouter
   private userController: UserRepository.IUserController
   private userMiddleware: UserRepository.IUserMiddleware
 
@@ -29,7 +29,7 @@ class UserRouter implements UserRepository.IUserRouter {
     this.router.post(
       UserRepository.USER_ENDPOINT.REGISTER,
       this.userMiddleware.validate(userSchemas.registerSchema),
-      (req: Request<{}, {}, UserRepository.IRegisterRequestBody>, res) =>
+      (req: UserRepository.IRegisterRequestBody, res) =>
         this.userController.registerUserController(req, res)
     )
 

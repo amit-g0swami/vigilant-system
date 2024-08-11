@@ -4,6 +4,10 @@ import { ERROR_MESSAGE, HTTP_STATUS_CODE } from './shared.interface'
 import { NextFunction, Request, Response, Router } from 'express'
 
 export namespace QueryRepository {
+  type IBaseQueryMessage = string
+  type IQueryMeaasge = QUERY_MESSAGE | ERROR_MESSAGE | IBaseQueryMessage
+  type IEmptyObject = {}
+
   export enum QUERY_MESSAGE {
     QUERY_CREATED = 'Query created successfully',
     QUERIES_FETCHED = 'Queries fetched successfully'
@@ -35,9 +39,6 @@ export namespace QueryRepository {
 
   export interface IQueryDataDocument extends IQueryData, Document {}
 
-  type IBaseQueryMessage = string
-  type IQueryMeaasge = QUERY_MESSAGE | ERROR_MESSAGE | IBaseQueryMessage
-
   export interface IQueryResponse
     extends Response<{
       message: IQueryMeaasge
@@ -56,7 +57,7 @@ export namespace QueryRepository {
     validate(
       schema: ObjectSchema
     ): (
-      req: Request<{}, {}, IQueryData>,
+      req: Request<IEmptyObject, IEmptyObject, IQueryData>,
       res: IQueryResponse,
       next: NextFunction
     ) => void

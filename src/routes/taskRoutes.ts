@@ -5,7 +5,7 @@ import { taskController } from '../controllers/taskController'
 import { taskMiddleware } from '../middleware/taskMiddleware'
 
 class TaskRouter implements TaskRepository.ITaskRouter {
-  private router: Router
+  private router: TaskRepository.IBaseTaskRouter
   private taskController: TaskRepository.ITaskController
   private taskMiddleware: TaskRepository.ITaskMiddleware
 

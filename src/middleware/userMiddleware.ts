@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express'
+import { NextFunction } from 'express'
 import { ObjectSchema } from 'joi'
 import { HTTP_STATUS_CODE } from '../types/shared.interface'
 import { UserRepository } from '../types/user.interface'
@@ -6,8 +6,8 @@ import { UserRepository } from '../types/user.interface'
 class UserMiddleware implements UserRepository.IUserMiddleware {
   public validate(schema: ObjectSchema) {
     return (
-      req: Request<UserRepository.IRegisterRequestBody>,
-      res: Response<UserRepository.IUserResponse>,
+      req: UserRepository.IUserMiddlewareRequest,
+      res: UserRepository.IUserResponse,
       next: NextFunction
     ) => {
       const { error } = schema.validate(req.body)
