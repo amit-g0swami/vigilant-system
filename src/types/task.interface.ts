@@ -49,6 +49,12 @@ export namespace TaskRepository {
   type IBaseTaskMessage = string
   type ITaskMessage = TASK_MESSAGE | ERROR_MESSAGE | IBaseTaskMessage
 
+  export interface ITaskRequest extends Request {
+    params: {
+      taskId: string
+    }
+  }
+
   export interface ITaskResponse {
     message: ITaskMessage
     status: HTTP_STATUS_CODE

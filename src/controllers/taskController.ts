@@ -11,7 +11,7 @@ class TaskController implements TaskRepository.ITaskController {
   }
 
   public async createTask(
-    req: Request,
+    req: Request<{}, {}, TaskRepository.ICreateTaskRequestBody>,
     res: Response<TaskRepository.ITaskResponse>
   ): Promise<void> {
     const { title, description, dueDate, priority, assignedTo, createdBy } =
@@ -39,7 +39,7 @@ class TaskController implements TaskRepository.ITaskController {
   }
 
   public async getTaskById(
-    req: Request,
+    req: TaskRepository.ITaskRequest,
     res: Response<TaskRepository.ITaskResponse>
   ): Promise<void> {
     const { taskId } = req.params

@@ -1,4 +1,3 @@
-import { Request, Response } from 'express'
 import { queryService } from '../services/queryService'
 import { QueryRepository } from '../types/query.interface'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from '../types/shared.interface'
@@ -11,8 +10,8 @@ class QueryController implements QueryRepository.IQueryController {
   }
 
   public createdQuery = async (
-    req: Request,
-    res: Response<QueryRepository.IQueryResponse>
+    req: QueryRepository.IQueryRequest,
+    res: QueryRepository.IQueryResponse
   ): Promise<void> => {
     try {
       const { name, email, queryType, mobileNumber } = req.body
@@ -36,9 +35,9 @@ class QueryController implements QueryRepository.IQueryController {
   }
 
   public queriesGetController = async (
-    req: Request,
-    res: Response<QueryRepository.IQueryResponse>
-  ): Promise<Response<QueryRepository.IQueryResponse> | void> => {
+    req: QueryRepository.IQueryRequest,
+    res: QueryRepository.IQueryResponse
+  ): Promise<QueryRepository.IQueryResponse | void> => {
     try {
       const queries = await this.queryService.getQueries()
 

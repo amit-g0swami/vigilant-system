@@ -38,11 +38,14 @@ export namespace QueryRepository {
   type IBaseQueryMessage = string
   type IQueryMeaasge = QUERY_MESSAGE | ERROR_MESSAGE | IBaseQueryMessage
 
-  export interface IQueryResponse {
-    message: IQueryMeaasge
-    status: HTTP_STATUS_CODE
-    query?: IQueryDataDocument | IQueryDataDocument[]
-  }
+  export interface IQueryResponse
+    extends Response<{
+      message: IQueryMeaasge
+      status: HTTP_STATUS_CODE
+      query?: IQueryDataDocument | IQueryDataDocument[]
+    }> {}
+
+  export interface IQueryRequest extends Request {}
 
   export interface IQueryService {
     createQuery(queryData: ICreateQueryRequestBody): Promise<IQueryDataDocument>
@@ -54,17 +57,17 @@ export namespace QueryRepository {
       schema: ObjectSchema
     ): (
       req: Request<{}, {}, IQueryData>,
-      res: Response<IQueryResponse>,
+      res: IQueryResponse,
       next: NextFunction
     ) => void
   }
 
   export interface IQueryController {
-    createdQuery(req: Request, res: Response<IQueryResponse>): Promise<void>
+    createdQuery(req: IQueryRequest, res: IQueryResponse): Promise<void>
     queriesGetController(
-      req: Request,
-      res: Response<IQueryResponse>
-    ): Promise<Response<IQueryResponse> | void>
+      req: IQueryRequest,
+      res: IQueryResponse
+    ): Promise<IQueryResponse | void>
   }
 
   export interface IQueryRouter {
