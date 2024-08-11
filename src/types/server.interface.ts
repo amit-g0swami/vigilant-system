@@ -1,6 +1,7 @@
 export namespace ClientServerInterface {
   export enum SERVER_MESSAGE {
-    CONNECTION_SUCCESS = 'Connected to the database'
+    CONNECTION_SUCCESS = 'Connected to the database',
+    HEALTH_CHECK_RESPONSE = 'Hello World!'
   }
 
   export interface IEnvConfig {
@@ -34,6 +35,10 @@ export namespace ClientServerInterface {
         )
       }
     })
+  }
+
+  export enum END_POINT {
+    HEALTH_CHECK = '/'
   }
 
   export interface IClientServer {

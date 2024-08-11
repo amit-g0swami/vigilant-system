@@ -6,18 +6,21 @@ import dotenv from 'dotenv'
 import { setupSwagger } from '../swagger'
 import { Logger } from '../logger/logger.lib'
 import { connectToDB } from '../config/database'
-import { CONSTANTS, END_POINT } from '../types/shared.interface'
+import {
+  CONSTANTS,
+  END_POINT,
+  HTTP_STATUS_CODE
+} from '../types/shared.interface'
 import { userRouter } from '../routes/userRoutes'
 import { queryRouter } from '../routes/queryRoutes'
 import { ClientServerInterface } from '../types/server.interface'
-
-dotenv.config()
 
 class ClientServer implements ClientServerInterface.IClientServer {
   private app: Application
   private port: string
 
   constructor() {
+    dotenv.config()
     this._validateEnv()
     this.app = express()
     this.port = process.env.PORT!
@@ -54,8 +57,11 @@ class ClientServer implements ClientServerInterface.IClientServer {
   }
 
   private _initializeRoutes() {
-    this.app.get('/', (_req, res) => {
-      res.send('Hello World!')
+    this.app.get(ClientServerInterface.END_POINT.HEALTH_CHECK, (_req, res) => {
+      res.send({
+        status: HTTP_STATUS_CODE.OK,
+        message: ClientServerInterface.SERVER_MESSAGE.HEALTH_CHECK_RESPONSE
+      })
     })
     this.app.use(END_POINT.BASE_URL, userRouter.getRouter())
     this.app.use(END_POINT.BASE_URL, queryRouter.getRouter())
