@@ -5,7 +5,7 @@ import { QueryRepository } from '../types/query.interface'
 import { queryController } from '../controllers/queryController'
 
 class QueryRouter implements QueryRepository.IQueryRouter {
-  private router: Router
+  private router: QueryRepository.IQueryBaseRouter
   private queryController: QueryRepository.IQueryController
   private queryMiddleware: QueryRepository.IQueryMiddleware
 

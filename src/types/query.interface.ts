@@ -8,6 +8,8 @@ export namespace QueryRepository {
   type IQueryMeaasge = QUERY_MESSAGE | ERROR_MESSAGE | IBaseQueryMessage
   type IEmptyObject = {}
 
+  export type IQueryBaseRouter = Router
+
   export enum QUERY_MESSAGE {
     QUERY_CREATED = 'Query created successfully',
     QUERIES_FETCHED = 'Queries fetched successfully'
@@ -35,8 +37,6 @@ export namespace QueryRepository {
     createdAt: Date
   }
 
-  export interface IQueryRequestBody extends IQueryData {}
-
   export interface IQueryDataDocument extends IQueryData, Document {}
 
   export interface IQueryResponse
@@ -46,7 +46,8 @@ export namespace QueryRepository {
       query?: IQueryDataDocument | IQueryDataDocument[]
     }> {}
 
-  export interface IQueryRequest extends Request {}
+  export interface IQueryRequest
+    extends Request<IEmptyObject, IEmptyObject, IQueryData> {}
 
   export interface IQueryService {
     createQuery(queryData: ICreateQueryRequestBody): Promise<IQueryDataDocument>
@@ -56,11 +57,7 @@ export namespace QueryRepository {
   export interface IQueryMiddleware {
     validate(
       schema: ObjectSchema
-    ): (
-      req: Request<IEmptyObject, IEmptyObject, IQueryData>,
-      res: IQueryResponse,
-      next: NextFunction
-    ) => void
+    ): (req: IQueryRequest, res: IQueryResponse, next: NextFunction) => void
   }
 
   export interface IQueryController {

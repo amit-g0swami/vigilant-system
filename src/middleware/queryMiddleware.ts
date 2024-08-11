@@ -1,12 +1,12 @@
 import { ObjectSchema } from 'joi'
-import { Request, NextFunction } from 'express'
+import { NextFunction } from 'express'
 import { HTTP_STATUS_CODE } from '../types/shared.interface'
 import { QueryRepository } from '../types/query.interface'
 
 class QueryMiddleware implements QueryRepository.IQueryMiddleware {
   public validate(schema: ObjectSchema) {
     return (
-      req: Request<QueryRepository.IQueryRequestBody>,
+      req: QueryRepository.IQueryRequest,
       res: QueryRepository.IQueryResponse,
       next: NextFunction
     ) => {
