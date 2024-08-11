@@ -4,6 +4,15 @@ import { NextFunction, Request, Response, Router } from 'express'
 import { ERROR_MESSAGE, HTTP_STATUS_CODE } from './shared.interface'
 
 export namespace TaskRepository {
+  type IBaseTaskMessage = string
+  type ITaskMessage = TASK_MESSAGE | ERROR_MESSAGE | IBaseTaskMessage
+  type IEmptyObject = {}
+  type IGenericControllerType<T, U, W = void, V = void> = (
+    req: T,
+    res: U,
+    next?: V
+  ) => Promise<W>
+
   export enum TASK_MESSAGE {
     TASK_CREATED = 'Task created successfully',
     TASK_FETCHED = 'Task fetched successfully'
@@ -35,7 +44,7 @@ export namespace TaskRepository {
   }
 
   export interface ICreateTaskRequestBody
-    extends Request<{}, {}, ICreateTaskRequestBodyDTO> {}
+    extends Request<IEmptyObject, IEmptyObject, ICreateTaskRequestBodyDTO> {}
 
   export interface ITask extends Document {
     title: string
@@ -48,9 +57,6 @@ export namespace TaskRepository {
     createdAt: Date
     updatedAt: Date
   }
-
-  type IBaseTaskMessage = string
-  type ITaskMessage = TASK_MESSAGE | ERROR_MESSAGE | IBaseTaskMessage
 
   export type IBaseTaskRouter = Router
   export interface ITaskRequest extends Request {
@@ -82,8 +88,8 @@ export namespace TaskRepository {
   }
 
   export interface ITaskController {
-    createTask(req: ICreateTaskRequestBody, res: ITaskResponse): Promise<void>
-    getTaskById(req: ITaskRequest, res: ITaskResponse): Promise<void>
+    createTask: IGenericControllerType<ICreateTaskRequestBody, ITaskResponse>
+    getTaskById: IGenericControllerType<ITaskRequest, ITaskResponse>
   }
 
   export interface ITaskRouter {

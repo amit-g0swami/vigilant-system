@@ -7,6 +7,11 @@ export namespace QueryRepository {
   type IBaseQueryMessage = string
   type IQueryMeaasge = QUERY_MESSAGE | ERROR_MESSAGE | IBaseQueryMessage
   type IEmptyObject = {}
+  type IGenericControllerType<T, U, W = void, V = void> = (
+    req: T,
+    res: U,
+    next?: V
+  ) => Promise<W>
 
   export type IQueryBaseRouter = Router
 
@@ -61,11 +66,12 @@ export namespace QueryRepository {
   }
 
   export interface IQueryController {
-    createdQuery(req: IQueryRequest, res: IQueryResponse): Promise<void>
-    queriesGetController(
-      req: IQueryRequest,
-      res: IQueryResponse
-    ): Promise<IQueryResponse | void>
+    createdQuery: IGenericControllerType<IQueryRequest, IQueryResponse>
+    queriesGetController: IGenericControllerType<
+      IQueryRequest,
+      IQueryResponse,
+      IQueryResponse | void
+    >
   }
 
   export interface IQueryRouter {

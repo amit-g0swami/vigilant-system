@@ -7,6 +7,11 @@ export namespace UserRepository {
   type IBaseUserMessage = string
   type IUserMessage = USER_MESSAGE | ERROR_MESSAGE | IBaseUserMessage
   type IEmptyObject = {}
+  type IGenericControllerType<T, U, W = void, V = void> = (
+    req: T,
+    res: U,
+    next?: V
+  ) => Promise<W>
 
   export enum USER_ROLE_TYPE {
     SIMPLE = 'simple',
@@ -93,22 +98,19 @@ export namespace UserRepository {
   }
 
   export interface IUserController {
-    registerUserController(
-      req: IRegisterRequestBody,
-      res: IUserResponse
-    ): Promise<void>
-    loginUserController(
-      req: ILoginRequestBody,
-      res: IUserResponse
-    ): Promise<void>
-    logoutUserController(
-      req: ILogoutUserRequest,
-      res: IUserResponse
-    ): Promise<void>
-    getUserController(
-      req: IGetUserInfoHeader,
-      res: IUserResponse
-    ): Promise<void>
+    registerUserController: IGenericControllerType<
+      IRegisterRequestBody,
+      IUserResponse
+    >
+    loginUserController: IGenericControllerType<
+      ILoginRequestBody,
+      IUserResponse
+    >
+    logoutUserController: IGenericControllerType<
+      ILogoutUserRequest,
+      IUserResponse
+    >
+    getUserController: IGenericControllerType<IGetUserInfoHeader, IUserResponse>
   }
 
   export interface IUserRouter {
