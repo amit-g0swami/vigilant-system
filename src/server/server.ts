@@ -14,6 +14,7 @@ import {
 import { userRouter } from '../routes/userRoutes'
 import { queryRouter } from '../routes/queryRoutes'
 import { ClientServerInterface } from '../types/server.interface'
+import { taskRouter } from '../routes/taskRoutes'
 
 class ClientServer implements ClientServerInterface.IClientServer {
   private app: Application
@@ -65,6 +66,7 @@ class ClientServer implements ClientServerInterface.IClientServer {
     })
     this.app.use(END_POINT.BASE_URL, userRouter.getRouter())
     this.app.use(END_POINT.BASE_URL, queryRouter.getRouter())
+    this.app.use(END_POINT.BASE_URL, taskRouter.getRouter())
   }
 
   public async start() {
