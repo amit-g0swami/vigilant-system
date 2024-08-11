@@ -19,6 +19,20 @@ class UserService implements UserRepository.IUserService {
     return User.findOne({ username })
   }
 
+  private _findUserById(
+    id: string
+  ): Promise<UserRepository.IUserDataDocument | null> {
+    return User.findById(id)
+  }
+
+  private _findUserByUsername(
+    usernameOrEmail: string
+  ): Promise<UserRepository.IUserDataDocument | null> {
+    return User.findOne({
+      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
+    })
+  }
+
   public async registerUser(
     username: string,
     email: string,
@@ -50,9 +64,7 @@ class UserService implements UserRepository.IUserService {
     usernameOrEmail: string,
     password: string
   ): Promise<UserRepository.ILoginUser> {
-    const user = await User.findOne({
-      $or: [{ username: usernameOrEmail }, { email: usernameOrEmail }]
-    })
+    const user = await this._findUserByUsername(usernameOrEmail)
 
     if (!user || !(await bcrypt.compare(password, user.password))) {
       throw new Error(UserRepository.USER_MESSAGE.INVALID_CREDENTIALS)
@@ -73,7 +85,7 @@ class UserService implements UserRepository.IUserService {
     token: string
   ): Promise<UserRepository.IUserDataDocument> {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string }
-    const user = await User.findById(decoded.id)
+    const user = await this._findUserById(decoded.id)
     if (!user) {
       throw new Error(ERROR_MESSAGE.INVALID_USER)
     }

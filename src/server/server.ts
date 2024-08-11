@@ -1,8 +1,8 @@
-import express, { Application } from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import cors from 'cors'
 import dotenv from 'dotenv'
+import express, { Application } from 'express'
 import { setupSwagger } from '../swagger'
 import { Logger } from '../logger/logger.lib'
 import { connectToDB } from '../config/database'
@@ -17,15 +17,16 @@ import { ClientServerInterface } from '../types/server.interface'
 import { taskRouter } from '../routes/taskRoutes'
 import { redisConnector } from '../config/redisClient'
 
+dotenv.config()
+
 class ClientServer implements ClientServerInterface.IClientServer {
   private app: Application
   private port: string
 
-  constructor() {
-    dotenv.config()
+  constructor(DB_URL: string) {
     this._validateEnv()
     this.app = express()
-    this.port = process.env.PORT!
+    this.port = DB_URL
     this._initializeMiddlewares()
     this._initializeRoutes()
     this._initializeSwagger()
@@ -84,4 +85,5 @@ class ClientServer implements ClientServerInterface.IClientServer {
   }
 }
 
-export const AppServer = new ClientServer()
+const DB_URL = process.env.PORT!
+export const AppServer = new ClientServer(DB_URL)

@@ -2,6 +2,12 @@ import Query from '../models/Query'
 import { QueryRepository } from '../types/query.interface'
 
 class QueryService implements QueryRepository.IQueryService {
+  private _findQueryByStatus(
+    status: QueryRepository.QUERY_STATUS
+  ): Promise<QueryRepository.IQueryDataDocument[]> {
+    return Query.find({ status })
+  }
+
   public createQuery(
     queryData: QueryRepository.ICreateQueryRequestBody
   ): Promise<QueryRepository.IQueryDataDocument> {
@@ -12,9 +18,9 @@ class QueryService implements QueryRepository.IQueryService {
   public async getQueries(): Promise<
     QueryRepository.IQueryDataDocument | QueryRepository.IQueryDataDocument[]
   > {
-    const queries = await Query.find({
-      status: QueryRepository.QUERY_STATUS.PENDING
-    })
+    const queries = await this._findQueryByStatus(
+      QueryRepository.QUERY_STATUS.PENDING
+    )
     return queries
   }
 }

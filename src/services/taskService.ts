@@ -10,6 +10,10 @@ class TaskService implements TaskRepository.ITaskService {
     this.redisClient = redisConnector.getClient()
   }
 
+  private _findTaskById(taskId: string): Promise<TaskRepository.ITask | null> {
+    return Task.findById(taskId)
+  }
+
   public createTask(
     taskData: TaskRepository.ICreateTaskRequestBody
   ): Promise<TaskRepository.ITask> {
@@ -25,7 +29,8 @@ class TaskService implements TaskRepository.ITaskService {
       return JSON.parse(cachedTask)
     }
 
-    const task = Task.findById(taskId)
+    const task = await this._findTaskById(taskId)
+
     if (task) {
       await this.redisClient.set(`task:${taskId}`, JSON.stringify(task))
     }
