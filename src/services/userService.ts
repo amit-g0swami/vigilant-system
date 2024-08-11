@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken'
 import User from '../models/User'
 import { CONSTANTS, ERROR_MESSAGE } from '../types/shared.interface'
 import { UserRepository } from '../types/user.interface'
+import { emailService } from './mail.Service'
 
 class UserService implements UserRepository.IUserService {
   public async registerUser(
@@ -22,6 +23,8 @@ class UserService implements UserRepository.IUserService {
       email,
       password: hashedPassword
     })
+
+    await emailService.sendSignupEmail(email, username)
 
     return newUser.save()
   }
