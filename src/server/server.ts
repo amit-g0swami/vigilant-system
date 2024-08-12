@@ -3,12 +3,18 @@ import morgan from 'morgan'
 import cors from 'cors'
 import dotenv from 'dotenv'
 import express, { Application } from 'express'
+import path from 'path'
+import rfs from 'rotating-file-stream'
+import moment from 'moment'
+import fs from 'fs'
+import responseTime from 'response-time'
 import { setupSwagger } from '../swagger'
 import { Logger } from '../logger/logger.lib'
 import { connectToDB } from '../config/database'
 import {
   CONSTANTS,
   END_POINT,
+  ERROR_MESSAGE,
   HTTP_STATUS_CODE
 } from '../types/shared.interface'
 import { userRouter } from '../routes/userRoutes'
@@ -31,6 +37,7 @@ class ClientServer implements ClientServerInterface.IClientServer {
     this._initializeMiddlewares()
     this._initializeRoutes()
     this._initializeSwagger()
+    this._initializeErrorHandling()
   }
 
   private _validateEnv() {
@@ -41,10 +48,38 @@ class ClientServer implements ClientServerInterface.IClientServer {
 
   private _initializeMiddlewares() {
     this.app.use(cors())
-    this.app.use(express.json())
-    this.app.use(express.urlencoded({ extended: true }))
+    this.app.use(express.json({ limit: '50mb' }))
+    this.app.use(
+      express.urlencoded({
+        extended: true,
+        limit: '50mb',
+        parameterLimit: 50000
+      })
+    )
     this.app.use(helmet())
-    this.app.use(morgan('combined'))
+    this._initializeLogging()
+    this.app.use(responseTime())
+    this.app.use(express.static(path.join(__dirname, 'assets')))
+    this.app.use(express.static('public'))
+  }
+
+  private _initializeLogging() {
+    const logDirectory = path.join(
+      __dirname,
+      '/assets/logs/',
+      moment().format('DD-MM-YYYY')
+    )
+
+    if (!fs.existsSync(logDirectory)) {
+      fs.mkdirSync(logDirectory, { recursive: true })
+    }
+
+    const accessLogStream = rfs.createStream('access.log', {
+      interval: '1d', // rotate daily
+      path: logDirectory
+    })
+
+    this.app.use(morgan('combined', { stream: accessLogStream }))
   }
 
   private _initializeSwagger() {
@@ -73,6 +108,15 @@ class ClientServer implements ClientServerInterface.IClientServer {
 
   private _initializeRedis() {
     return redisConnector.connect()
+  }
+
+  private _initializeErrorHandling() {
+    this.app.use((err, res) => {
+      Logger.error(`Error: ${err}`, err)
+      res
+        .status(HTTP_STATUS_CODE.INTERNAL_SERVER_ERROR)
+        .json({ message: ERROR_MESSAGE.INTERNAL_SERVER_ERROR })
+    })
   }
 
   public async start() {
