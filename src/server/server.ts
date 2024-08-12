@@ -16,6 +16,7 @@ import { queryRouter } from '../routes/queryRoutes'
 import { ClientServerInterface } from '../types/server.interface'
 import { taskRouter } from '../routes/taskRoutes'
 import { redisConnector } from '../config/redisClient'
+import { connectToPostgresDB } from '../config/postgresDatabase'
 
 dotenv.config()
 
@@ -66,13 +67,18 @@ class ClientServer implements ClientServerInterface.IClientServer {
     return connectToDB.connect()
   }
 
+  private _initializePostgresConnection() {
+    return connectToPostgresDB.connect()
+  }
+
   private _initializeRedis() {
     return redisConnector.connect()
   }
 
   public async start() {
     try {
-      await this._initializeDBConection()
+      await this._initializeDBConection() // mysql
+      await this._initializePostgresConnection() // postgresql
       await this._initializeRedis()
       Logger.info(ClientServerInterface.SERVER_MESSAGE.CONNECTION_SUCCESS)
       this.app.listen(this.port, () => {

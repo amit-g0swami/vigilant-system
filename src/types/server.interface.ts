@@ -9,7 +9,13 @@ export namespace ClientServerInterface {
     EMAIL_HOST: process.env.EMAIL_HOST!,
     EMAIL_SERVICE: process.env.EMAIL_SERVICE!,
     NODE_ENV: process.env.NODE_ENV!,
-    REDIS_URL: process.env.REDIS_URL!
+    REDIS_URL: process.env.REDIS_URL!,
+    // postgresql
+    DB_HOST: process.env.DB_HOST!,
+    DB_PORT: process.env.DB_PORT!,
+    DB_USERNAME: process.env.DB_USERNAME!,
+    DB_PASSWORD: process.env.DB_PASSWORD!,
+    DB_NAME: process.env.DB_NAME!
   }
 
   export enum SERVER_MESSAGE {
@@ -28,6 +34,12 @@ export namespace ClientServerInterface {
     EMAIL_SERVICE: string
     NODE_ENV: string
     REDIS_URL: string
+    // postgresql
+    DB_HOST: string
+    DB_PORT: string
+    DB_USERNAME: string
+    DB_PASSWORD: string
+    DB_NAME: string
   }
 
   export const requiredEnvVars: (keyof IEnvConfig)[] = [
@@ -39,7 +51,13 @@ export namespace ClientServerInterface {
     'EMAIL_HOST',
     'EMAIL_SERVICE',
     'NODE_ENV',
-    'REDIS_URL'
+    'REDIS_URL',
+    // postgresql
+    'DB_HOST',
+    'DB_PORT',
+    'DB_USERNAME',
+    'DB_PASSWORD',
+    'DB_NAME'
   ]
 
   export const validateEnvVars = (envVars: IEnvConfig): void => {
