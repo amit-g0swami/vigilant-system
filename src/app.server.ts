@@ -8,17 +8,17 @@ import moment from 'moment'
 import rfs from 'rotating-file-stream'
 import responseTime from 'response-time'
 import express, { Application } from 'express'
-import { setupSwagger } from '../swagger'
-import { Logger } from '../logger/logger.lib'
+import { setupSwagger } from './swagger'
+import { Logger } from './logger/logger.lib'
 import {
   CONSTANTS,
   END_POINT,
   ERROR_MESSAGE,
   HTTP_STATUS_CODE
-} from '../shared/shared.interface'
+} from './shared/shared.interface'
 import { ClientServerInterface } from './app.interface'
-import { queryRouter, taskRouter, userRouter } from '../apis'
-import { connectToDB, connectToPostgresDB, redisConnector } from '../config'
+import { queryRouter, taskRouter, userRouter } from './apis'
+import { connectToDB, connectToPostgresDB, redisConnector } from './config'
 
 dotenv.config()
 

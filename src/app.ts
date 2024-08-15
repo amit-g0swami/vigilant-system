@@ -1,3 +1,3 @@
-import { AppServer } from './server'
+import { AppServer } from './app.server'
 
 AppServer.start()
