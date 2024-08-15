@@ -1,7 +1,7 @@
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
 import { Application } from 'express'
-import { END_POINT } from './types/shared.interface'
+import { END_POINT } from './shared'
 
 const swaggerSpec = swaggerJsdoc({
   definition: {
